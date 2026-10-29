@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#eaf6ff">
+<title>A Little Birthday Adventure for Ayesha</title>
+<style>
+  :root {
+    --sky:#bfe6ff; --sky-deep:#79bce8; --lav:#d9d0ff; --lav-deep:#a89be9;
+    --ink:#33445d; --muted:#687b94; --white:#fffdfd; --glass:rgba(255,255,255,.72);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; min-height:100vh; color:var(--ink);
+    font-family:ui-rounded,"Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+    background:
+      radial-gradient(ellipse at 14% 16%,rgba(255,255,255,.98) 0 3%,transparent 22%),
+      radial-gradient(ellipse at 85% 22%,rgba(217,208,255,.7),transparent 34%),
+      radial-gradient(ellipse at 25% 88%,rgba(191,230,255,.85),transparent 36%),
+      linear-gradient(135deg,#f9fcff 0%,#e9f6ff 48%,#f2edff 100%);
+    overflow-x:hidden;
+  }
+  .sky-decor{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+  .sparkle{position:absolute;color:rgba(122,157,205,.55);animation:twinkle 4s ease-in-out infinite}
+  .cloud{position:absolute;width:140px;height:42px;border-radius:40px;background:rgba(255,255,255,.46);filter:blur(.3px);animation:drift 32s linear infinite}
+  .cloud:before,.cloud:after{content:"";position:absolute;background:inherit;border-radius:50%}
+  .cloud:before{width:55px;height:55px;left:20px;top:-24px}
+  .cloud:after{width:72px;height:68px;left:58px;top:-34px}
+  @keyframes twinkle{0%,100%{opacity:.3;transform:scale(.85) rotate(0)}50%{opacity:1;transform:scale(1.12) rotate(12deg)}}
+  @keyframes drift{from{transform:translateX(-180px)}to{transform:translateX(calc(100vw + 200px))}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pop{0%{transform:scale(.88);opacity:.5}100%{transform:scale(1);opacity:1}}
+  @keyframes confettiFall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+  .app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+  header{width:min(1080px,100%);margin:0 auto;padding:22px 22px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{font-size:.88rem;font-weight:800;letter-spacing:.08em;color:#637c9b}
+  .brand span{color:#9c91dd}
+  .progress{display:flex;gap:7px;align-items:center}
+  .dot{width:8px;height:8px;border-radius:50%;background:rgba(124,156,198,.25);transition:.35s}
+  .dot.active{width:23px;border-radius:9px;background:linear-gradient(90deg,var(--sky-deep),var(--lav-deep))}
+  main{width:min(920px,100%);margin:auto;padding:28px 20px 42px;display:flex;align-items:center;justify-content:center;flex:1}
+  .page{display:none;width:100%;animation:fadeUp .55s ease both}
+  .page.active{display:block}
+  .panel{margin:auto;width:min(760px,100%);border:1px solid rgba(255,255,255,.92);background:var(--glass);backdrop-filter:blur(14px);border-radius:30px;padding:clamp(24px,5vw,48px);box-shadow:0 22px 70px rgba(111,145,190,.14),inset 0 1px 0 rgba(255,255,255,.95);text-align:center}
+  .eyebrow{font-size:.76rem;text-transform:uppercase;letter-spacing:.2em;font-weight:800;color:#8c8bd0;margin-bottom:15px}
+  h1,h2,p{margin-top:0}
+  h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.3rem,7vw,4.7rem);font-weight:500;letter-spacing:-.045em;line-height:1.06;margin-bottom:18px;color:#354b68}
+  h1 em{font-weight:400;color:#8c8bce}
+  h2{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:clamp(1.8rem,4vw,2.7rem);margin-bottom:12px}
+  p{color:var(--muted);line-height:1.75}
+  .hero-art{height:150px;display:flex;align-items:center;justify-content:center;position:relative;margin:0 auto 12px;max-width:320px}
+  .moon{width:92px;height:92px;border-radius:50%;background:linear-gradient(135deg,#fff,#dceeff);box-shadow:0 0 0 14px rgba(255,255,255,.22),0 0 45px rgba(160,181,245,.45);position:relative;animation:float 5s ease-in-out infinite}
+  .moon:after{content:"";position:absolute;width:84px;height:84px;left:24px;top:-10px;border-radius:50%;background:#e8e4ff;opacity:.9}
+  .orbit-star{position:absolute;font-size:1.4rem;color:#a69ce9}
+  .orbit-star.one{top:12px;left:24%}.orbit-star.two{right:20%;bottom:20px;color:#8cc8ef;font-size:1rem}.orbit-star.three{right:25%;top:5px;font-size:.8rem}
+  .small-note{font-size:.86rem;color:#8492a8}
+  .btn{appearance:none;border:0;border-radius:999px;padding:14px 23px;font:inherit;font-weight:750;cursor:pointer;color:#314763;background:linear-gradient(100deg,#c9ebff,#ded7ff);box-shadow:0 8px 20px rgba(133,160,211,.18);transition:transform .2s,box-shadow .2s,filter .2s;display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 12px 25px rgba(133,160,211,.25);filter:saturate(1.06)}
+  .btn:active{transform:translateY(0) scale(.98)}
+  .btn.secondary{background:rgba(255,255,255,.8);border:1px solid #dce8f7;box-shadow:none}
+  .btn-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:25px}
+  .game-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+  .game-head .eyebrow{margin:0}
+  .score{font-size:.82rem;background:#fff;border:1px solid #e6e7fb;padding:8px 12px;border-radius:999px;color:#7b78bd;font-weight:800}
+  .activity{background:rgba(255,255,255,.67);border:1px solid rgba(216,228,247,.9);border-radius:22px;padding:20px;margin:14px 0;text-align:left}
+  .activity h3{font-size:1rem;margin:0 0 6px;color:#465d79}
+  .activity p{font-size:.9rem;margin-bottom:14px}
+  .choices{display:flex;flex-wrap:wrap;gap:9px}
+  .choice{border:1px solid #dce6f4;border-radius:14px;background:#fff;padding:10px 13px;font:inherit;font-size:.9rem;color:#50617a;cursor:pointer;transition:.2s}
+  .choice:hover{border-color:#a8cfee;transform:translateY(-1px)}
+  .choice.selected{background:#e9f5ff;border-color:#8ec8ef;box-shadow:0 0 0 2px rgba(142,200,239,.16)}
+  .feedback{min-height:24px;margin:10px 0 0;font-size:.88rem;color:#827ac5;font-weight:650}
+  .biscuit{font-size:2rem;display:inline-block;animation:float 3s ease-in-out infinite}
+  .fortune{min-height:72px;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,#f9fdff,#f3efff);border:1px dashed #c9c9ef;border-radius:16px;padding:15px;color:#667a9a;font-family:Georgia,serif;font-size:1.08rem;margin-top:12px}
+  .prank-wrap{max-width:600px;margin:auto}
+  .official-stamp{display:inline-block;transform:rotate(-8deg);border:2px dashed #a5a0dd;border-radius:8px;padding:7px 11px;color:#8e88c9;font-size:.72rem;font-weight:900;letter-spacing:.1em;margin:5px 0 20px}
+  .certificate{background:rgba(255,255,255,.55);border:1px solid #e4e1fa;border-radius:22px;padding:23px;margin:22px 0}
+  .certificate strong{font-family:Georgia,serif;font-size:1.35rem;color:#657ba0}
+  .letter-stage{padding:clamp(12px,3vw,30px);background:rgba(255,255,255,.34);border-radius:22px}
+  .letter{position:relative;max-width:650px;margin:auto;text-align:left;padding:clamp(23px,5vw,45px);background:
+    radial-gradient(ellipse at 6% 12%,rgba(148,91,46,.14),transparent 18%),
+    radial-gradient(ellipse at 93% 82%,rgba(145,93,47,.12),transparent 20%),
+    radial-gradient(ellipse at 88% 10%,rgba(170,120,75,.09),transparent 16%),
+    linear-gradient(135deg,#fbf1d9,#f5e7c9 55%,#f8edd6);
+    color:#65513b;box-shadow:0 14px 35px rgba(107,83,58,.16);border:1px solid rgba(160,119,74,.32);transform:rotate(-.35deg)}
+  .letter:before{content:"";position:absolute;inset:10px;border:1px solid rgba(160,119,74,.23);pointer-events:none}
+  .letter .letter-top{font-size:.72rem;text-transform:uppercase;letter-spacing:.19em;color:#9c7c55;margin-bottom:25px}
+  .letter h2{font-family:Georgia,serif;font-size:clamp(1.8rem,5vw,2.5rem);color:#6d5237}
+  .letter p{font-family:Georgia,"Times New Roman",serif;font-size:1.02rem;line-height:1.9;color:#70583e}
+  .letter{padding-bottom:clamp(70px,10vw,90px)}
+  .letter .signoff{font-family:Georgia,serif;font-style:italic;font-size:1.08rem;margin-top:20px}
+  .wax{width:45px;height:45px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d4c8ff,#9c92d9);display:grid;place-items:center;color:#fff;box-shadow:0 4px 9px rgba(92,78,149,.18);position:absolute;right:25px;bottom:20px;font-size:1.1rem}
+  footer{text-align:center;color:#8c9ab0;font-size:.78rem;padding:0 16px 22px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#fff;padding:12px 18px;border-radius:999px;box-shadow:0 8px 28px #7288a52b;color:#52647e;z-index:10;transition:.3s;font-size:.88rem;max-width:90vw;text-align:center}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .confetti{position:fixed;top:-15px;width:8px;height:13px;z-index:20;pointer-events:none;animation:confettiFall 3.5s linear forwards}
+  .music-status{font-size:.72rem;color:#8797ad;margin-top:12px;min-height:18px}
+  @media(max-width:560px){
+    header{padding:17px 16px 0}.brand{font-size:.74rem}main{padding:20px 13px 30px}
+    .panel{border-radius:24px;padding:25px 18px}.hero-art{height:130px}
+    .activity{padding:16px}.letter{padding:25px 21px}.letter:before{inset:7px}
+    .letter .wax{right:18px;bottom:15px}
+    .btn{width:100%}.btn-row{gap:9px}
+  }
+  @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="sky-decor" aria-hidden="true" id="skyDecor">
+  <span class="sparkle" style="left:12%;top:22%;font-size:19px">✦</span>
+  <span class="sparkle" style="left:78%;top:14%;font-size:14px;animation-delay:1s">✧</span>
+  <span class="sparkle" style="left:88%;top:69%;font-size:22px;animation-delay:2s">✦</span>
+  <span class="sparkle" style="left:21%;top:78%;font-size:13px;animation-delay:1.5s">✧</span>
+  <span class="cloud" style="top:16%;animation-duration:42s;opacity:.7"></span>
+  <span class="cloud" style="top:72%;animation-duration:55s;animation-delay:-20s;opacity:.5"></span>
+</div>
+<div class="app">
+  <header>
+    <div class="brand">A LITTLE <span>HAPPY PLACE</span> ✧</div>
+    <div class="progress" aria-label="Page progress">
+      <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+  </header>
+  <main>
+    <section class="page active" id="page1" aria-labelledby="welcome-title">
+      <div class="panel">
+        <div class="hero-art" aria-hidden="true">
+          <span class="orbit-star one">✦</span><span class="orbit-star two">✧</span><span class="orbit-star three">✦</span>
+          <div class="moon"></div>
+        </div>
+        <div class="eyebrow">a tiny birthday adventure</div>
+        <h1 id="welcome-title">For you, <em>Ayesha.</em></h1>
+        <p>Today deserves a little extra sparkle, so I made you a tiny corner of the internet. No big speeches, no awkward stuff — just a few fun surprises and a birthday wish from your online friend.</p>
+        <p class="small-note">Take your time. The adventure is very low-stakes. ✨</p>
+        <div class="btn-row"><button class="btn" onclick="goTo(2)">Start the little adventure <span>→</span></button></div>
+        <div class="music-status" id="musicStatus">A soft little soundtrack may start after your first tap.</div>
+      </div>
+    </section>
+
+    <section class="page" id="page2" aria-labelledby="game-title">
+      <div class="panel">
+        <div class="game-head"><div class="eyebrow">level 01 · highly important research</div><div class="score">FUN POINTS: <span id="score">0</span>/3</div></div>
+        <h2 id="game-title">Birthday brain rot 🪄</h2>
+        <p>Choose your answers wisely. A completely unserious committee is judging your decisions.</p>
+        <div class="activity">
+          <h3>1. You find a tiny cloud in your pocket. What now?</h3>
+          <p>It is legally yours. Please act responsibly.</p>
+          <div class="choices" data-question="0">
+            <button class="choice" data-points="1">Keep it as a pet ☁️</button>
+            <button class="choice" data-points="1">Rent it out for shade</button>
+            <button class="choice" data-points="1">Ask it for tomorrow's weather</button>
+          </div><div class="feedback" id="feedback0"></div>
+        </div>
+        <div class="activity">
+          <h3>2. Pick your birthday superpower.</h3>
+          <p>Use this power only for good. Or snacks.</p>
+          <div class="choices" data-question="1">
+            <button class="choice" data-points="1">Unlimited snacks 🍰</button>
+            <button class="choice" data-points="1">Pause awkward moments</button>
+            <button class="choice" data-points="1">Teleport out of chores</button>
+          </div><div class="feedback" id="feedback1"></div>
+        </div>
+        <div class="activity">
+          <h3>3. Choose your official birthday vibe.</h3>
+          <p>This is binding until at least tomorrow morning.</p>
+          <div class="choices" data-question="2">
+            <button class="choice" data-points="1">Soft cloud energy ☁️</button>
+            <button class="choice" data-points="1">Lavender main character</button>
+            <button class="choice" data-points="1">Certified chaos gremlin</button>
+          </div><div class="feedback" id="feedback2"></div>
+        </div>
+        <div class="fortune" id="fortune">🎁 Bonus: tap below to receive your extremely unofficial birthday fortune.</div>
+        <div class="btn-row">
+          <button class="btn secondary" onclick="getFortune()">Reveal my fortune ✨</button>
+          <button class="btn" onclick="goTo(3)">Continue to the next surprise →</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page3" aria-labelledby="surprise-title">
+      <div class="panel prank-wrap">
+        <div class="eyebrow">level 02 · urgent birthday business</div>
+        <div class="biscuit" aria-hidden="true">📋</div>
+        <h2 id="surprise-title">Ayesha, we've reviewed your case.</h2>
+        <p>After extensive research (approximately 4 seconds), the International Birthday Committee has reached a decision.</p>
+        <div class="certificate">
+          <div class="official-stamp">100% OFFICIAL-ISH</div>
+          <p style="margin-bottom:8px">This certificate hereby declares</p>
+          <strong>AYESHA</strong>
+          <p style="margin:10px 0 0">legally entitled to:</p>
+          <p style="margin:12px 0 0;color:#6b70a9">✦ Extra cake<br>✦ Ignoring at least one boring task<br>✦ Being celebrated without having to act cool about it<br>✦ One (1) free pass to be a little dramatic today</p>
+        </div>
+        <p id="committeeLine">Please press the button to receive your committee's final, deeply scientific verdict.</p>
+        <div class="btn-row">
+          <button class="btn secondary" onclick="committeeVerdict()">Get the verdict 🧑‍⚖️</button>
+          <button class="btn" onclick="goTo(4)">Open your birthday letter →</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page4" aria-labelledby="letter-title">
+      <div class="panel">
+        <div class="eyebrow">the last little surprise</div>
+        <h2 id="letter-title">A letter, just for your birthday</h2>
+        <p>Something a little quieter to finish the adventure.</p>
+        <div class="letter-stage">
+          <article class="letter">
+            <div class="letter-top">A small note · sent with good wishes</div>
+            <h2>HAPPY BIRTHDAY TO YOU, AYESHA!!!! 🎂🎉</h2>
+            <p>Many, many happy returns of the day! I almost forgot to wish you, but somehow I remembered at the last moment lmao 😭. Anyway, I wish you the warmest and happiest birthday ever!</p>
+            <p>May your life become more beautiful and better than before. May this new year of your life bring you countless surprises, good news, happiness, and beautiful memories. May Allah grant you the things your heart wishes for, make your life the way you want it to be, and help you shine the way you've always wanted to. May Allah make all your dreams come true and give you countless reasons to be proud of yourself. Ameen. 🤍</p>
+            <p>Idk what else to say AHHHHHH 😭😭. Best of luck, lots of prayers, and so many wishes for you! Just keep smiling every second, every minute, every hour, and every day. Life has its ups and downs, but don't let the difficult moments make you forget who you are or what you're capable of. Keep your mind focused on your goals, keep working towards them, and never stop believing in yourself.</p>
+            <p>That's all, ig. 😭 May Allah fulfil all your dreams, bless you with endless happiness, protect you from every hardship, and take you to places you never even imagined you'd reach. May your future be brighter than you expect, and may you always have reasons to smile. Ameen. 🤍✨</p>
+            <p><strong>HAPPY BIRTHDAY ONCE AGAIN, AYESHA!! 🥳</strong></p>
+            <p class="signoff">Your friend or just a known person,<br>Ahnaf</p>
+            <div class="wax" aria-hidden="true">✦</div>
+          </article>
+        </div>
+        <div class="btn-row">
+          <button class="btn secondary" onclick="goTo(1)">↶ Replay the adventure</button>
+          <button class="btn" onclick="celebrate()">One last birthday sparkle ✨</button>
+        </div>
+        <p class="small-note" id="finalNote" style="margin-top:18px;margin-bottom:0">Made with good vibes, pixels, and absolutely no romantic subtext.</p>
+      </div>
+    </section>
+  </main>
+  <footer>made for Ayesha · white, sky blue & lavender skies ☁️</footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+  let currentPage=1;
+  const answered=new Set();
+  let points=0;
+  const dots=[...document.querySelectorAll('.dot')];
+  function goTo(n){
+    currentPage=n;
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    const page=document.getElementById('page'+n);
+    page.classList.add('active');
+    page.style.animation='none'; void page.offsetWidth; page.style.animation='';
+    dots.forEach((d,i)=>d.classList.toggle('active',i===n-1));
+    window.scrollTo({top:0,behavior:'smooth'});
+    startAudioOnInteraction();
+    if(n===4) makeConfetti(18);
+  }
+  document.querySelectorAll('.choices').forEach(group=>{
+    group.querySelectorAll('.choice').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const q=Number(group.dataset.question);
+        group.querySelectorAll('.choice').forEach(b=>b.classList.remove('selected'));
+        btn.classList.add('selected');
+        if(!answered.has(q)){answered.add(q);points++;document.getElementById('score').textContent=points;}
+        const idx=[...group.querySelectorAll('.choice')].indexOf(btn);
+        const fb=document.getElementById('feedback'+q);
+        fb.textContent=replies[q][idx];
+        fb.style.animation='none'; void fb.offsetWidth; fb.style.animation='pop .35s ease';
+        makeConfetti(8);
+        startAudioOnInteraction();
+      });
+    });
+  });
+  const replies=[
+    [
+      'Cloud adoption approved! Name it something dramatic, like Sir Fluffington. ☁️🐾',
+      'Smart landlord energy. Your cloud now has a monthly income and a tiny business card. ☂️💸',
+      'Forecast received: 90% chance of cake, 10% chance of you saying "told you so." 🌦️'
+    ],
+    [
+      'A person of culture. The snack council salutes you and has already started the cake. 🍰🫡',
+      'Pause button granted. Awkward moments now freeze while you calmly walk away. ⏸️😌',
+      'Teleporting out of chores, bold move. The dishes will remember this. 🌀🧽'
+    ],
+    [
+      'Soft cloud energy locked in. Blankets, snacks, and zero emails, as it should be. ☁️🤍',
+      'Lavender main character unlocked. Cue the slow-motion hair flip and the soundtrack. 💜✨',
+      'Certified chaos gremlin approved. The committee fears you and respects you deeply. 😈🎉'
+    ]
+  ];
+  const fortunes=[
+    'Your forecast: 90% chance of good snacks and a suspiciously nice day. ☁️',
+    'A tiny win is looking for you. Keep an eye out for it. ✨',
+    'The stars say: drink some water, accept the compliment, eat the cake.',
+    'Your next side quest: do one thing today purely because it makes you happy.',
+    'Rare birthday prophecy: you are allowed to rest and still be doing enough. 💜'
+  ];
+  function getFortune(){
+    const f=fortunes[Math.floor(Math.random()*fortunes.length)];
+    document.getElementById('fortune').textContent='🔮 '+f;
+    document.getElementById('fortune').style.animation='pop .3s ease';
+    showToast('The birthday oracle has spoken.');
+    startAudioOnInteraction();
+  }
+  const verdicts=[
+    'VERDICT: guilty of being birthday-worthy. Sentence: one extra slice of cake. 🍰',
+    'The committee has voted unanimously: today, you are the VIP of this tiny internet.',
+    'Case closed. You may now proceed directly to birthday fun. No appeals necessary.'
+  ];
+  function committeeVerdict(){
+    document.getElementById('committeeLine').textContent=verdicts[Math.floor(Math.random()*verdicts.length)];
+    makeConfetti(24); startAudioOnInteraction();
+  }
+  function showToast(message){
+    const t=document.getElementById('toast');t.textContent=message;t.classList.add('show');
+    clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove('show'),2400);
+  }
+  function makeConfetti(amount=45){
+    const colors=['#bfe6ff','#d9d0ff','#ffffff','#a7d9f7','#c6baf8'];
+    for(let i=0;i<amount;i++){
+      const el=document.createElement('i');el.className='confetti';
+      el.style.left=Math.random()*100+'vw';el.style.background=colors[Math.floor(Math.random()*colors.length)];
+      el.style.animationDelay=Math.random()*.7+'s';el.style.animationDuration=(2.5+Math.random()*2)+'s';
+      el.style.transform='rotate('+Math.random()*180+'deg)';
+      document.body.appendChild(el);setTimeout(()=>el.remove(),5200);
+    }
+  }
+  function celebrate(){
+    makeConfetti(90);
+    document.getElementById('finalNote').textContent='Birthday sparkle delivered. Hope this made you smile, Ayesha. 💙';
+    showToast('Happy Birthday, Ayesha! 🎂');
+  }
+
+  // Gentle original ambient tones. Browsers may block audio until the visitor interacts;
+  // it starts quietly on the first tap/click, with no visible music controls.
+  let audioStarted=false, audioCtx=null, masterGain=null, ambientTimer=null;
+  function startAudioOnInteraction(){
+    if(audioStarted)return;
+    const AudioContext=window.AudioContext||window.webkitAudioContext;
+    if(!AudioContext)return;
+    try{
+      audioCtx=new AudioContext();
+      masterGain=audioCtx.createGain();masterGain.gain.value=0.018;masterGain.connect(audioCtx.destination);
+      const notes=[261.63,329.63,392.00,329.63,293.66,349.23,440.00,349.23];
+      let idx=0;
+      function playNote(){
+        if(!audioCtx||audioCtx.state==='closed')return;
+        const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+        osc.type='sine';osc.frequency.value=notes[idx%notes.length];
+        gain.gain.setValueAtTime(0.0001,audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.24,audioCtx.currentTime+.18);
+        gain.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+1.35);
+        osc.connect(gain);gain.connect(masterGain);osc.start();osc.stop(audioCtx.currentTime+1.4);
+        idx++;
+      }
+      audioCtx.resume().then(()=>{
+        audioStarted=true;playNote();ambientTimer=setInterval(playNote,1450);
+        const status=document.getElementById('musicStatus');if(status)status.textContent='A soft, original ambient melody is playing quietly ♫';
+      });
+    }catch(e){/* Audio is optional; the birthday experience works without it. */}
+  }
+  ['pointerdown','keydown','touchstart'].forEach(eventName=>{
+    window.addEventListener(eventName,startAudioOnInteraction,{once:true,passive:true});
+  });
+</script>
+</body>
+</html>
